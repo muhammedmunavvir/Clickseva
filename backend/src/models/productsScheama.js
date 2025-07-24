@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export const getproductsScheama = new mongoose.Schema({
   id: { type: String },
   heading: { type: String },
-  discription: { type: String },
+  description: { type: String },
   url: { type: String },
   catogory: { type: String },
   price: { type: Number },

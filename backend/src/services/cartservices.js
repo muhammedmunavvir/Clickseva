@@ -34,7 +34,7 @@ export const addtocartservice = async (userId, productId) => {
 export const viewcartservices = async (userId) => {
   const user = await usermodel.findById(userId);
   if (!user) {
-    throw new CustomErrorhandler("User not found");
+    throw  CustomErrorhandler("User not found");
   }
 
   if (user.cart.length === 0) {

@@ -23,6 +23,7 @@ import Categorypage from "./pages/Categorypage";
 import { Razorpaycheckoutpage } from "./pages/Razorpaycheckflow";
 import { Orders } from "./admin/adminpages/Totalorders";
 import { Myorders } from "./pages/Myorders";
+import { AuthRedirect } from "./Login/authurl";
 
 //adimin section
 
@@ -37,6 +38,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/gettingcookie" element={<AuthRedirect />} />
         <Route path="/registerpage" element={<Register />} />
         <Route path="/Allproducts" element={<Allproducts />} />
         <Route path="/products/:category" element={<Categorypage />} />

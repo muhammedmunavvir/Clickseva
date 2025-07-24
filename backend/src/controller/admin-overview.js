@@ -12,15 +12,13 @@ export const totelorders = trycatch(async (req, res) => {
   });
 });
 
-
-
 // TOTEL REVENUE
 export const totelrevenue = trycatch(async (req, res) => {
   const orders = await orderModel.find().select("totalAmount").lean();
 
   const totelrevenue = orders.reduce(
     (sum, order) => sum + Number(order.totalAmount || 0),
-    0  
+    0
   );
 
   res.status(200).json({
@@ -29,4 +27,3 @@ export const totelrevenue = trycatch(async (req, res) => {
     totelrevenue,
   });
 });
- 

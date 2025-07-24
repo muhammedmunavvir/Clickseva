@@ -23,7 +23,7 @@ export const Navbar = () => {
 
     fetchProducts();
   }, []);
-
+ 
   useEffect(() => {
     const filterdata = products.filter((item) =>
       item.heading?.toLowerCase().includes(searchitem?.toLowerCase())
@@ -45,7 +45,7 @@ export const Navbar = () => {
   const nav = useNavigate();
 
   const [cart, setcart] = useState([]);
-  const userid = localStorage.getItem("userId");
+  const userid = localStorage.getItem("userid");
   const getcart = async () => {
     if (userid) {
       try {
@@ -75,7 +75,8 @@ export const Navbar = () => {
   }
 
   //user name
-  const uName = localStorage.getItem("username");
+  const uName = localStorage.getItem("userid");
+  const userpicture = localStorage.getItem("userpicture");
 
   return (
     <div>
@@ -170,7 +171,10 @@ export const Navbar = () => {
             {uName ? (
               <div className="flex items-center space-x-4">
                 <span className="text-white font-bold ">
-                  {uName.toUpperCase()}
+                  <div>
+                     <img src={userpicture} alt="profilepic" className="rounded-full w-10 h-10"/>
+                  </div>
+                 
                 </span>
                 <button
                   onClick={logout}

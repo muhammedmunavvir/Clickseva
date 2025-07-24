@@ -20,10 +20,10 @@ export const Category = () => {
   }, []);
 
   const cat = product.filter(
-    (item) => item.catogory === "cat-food" || item.Catogory === "cat-treat"
+    (item) => item.catogory === "grocery" || item.Catogory === "grocery"
   );
   const dog = product.filter(
-    (item) => item.catogory === "dog-food" || item.Catogory === "dog-bed"
+    (item) => item.catogory === "electronics" || item.Catogory === "electronics"
   );
 
   //DELETE PRODUCT
@@ -46,7 +46,7 @@ export const Category = () => {
       {/* Cat Section */}
       <div className="p-4">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-          Cat Products
+          Grocery Products
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cat.map((obj) => (
@@ -96,7 +96,7 @@ export const Category = () => {
       {/* Dog Section */}
       <div className="p-4">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-          Dog Products
+          Electronics  Products
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {dog.map((obj) => (

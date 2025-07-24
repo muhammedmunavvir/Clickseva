@@ -1,24 +1,23 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
-//JWT VERIFICATION
-
-export const jwtverificattion = async (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
+  const token = req.cookies.token;
  
-  const { token, role } = req.cookies.token;
-  // console.log("req.cookies",req.cookies)
-
   if (!token) {
-    return res.status(401).json({ message: "can't find token" });
+    return res.status(401).json({ message: "Not authenticated" });
   }
-  try {
-    const verified = jwt.verify(token, "secretKey");
-    req.userId = verified.id;
-    req.user = { id: verified.id, role };
-    // console.log("Decoded Token:", verified); // Log the full decoded
 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+   
+ 
+    req.user = decoded;
     next();
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ message: "invalid token" });
+  } catch (err) {
+      console.error("❌ JWT verification failed:", err.message);
+
+    return res.status(403).json({ message: "Invalid token" });
   }
 };

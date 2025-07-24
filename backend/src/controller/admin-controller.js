@@ -84,16 +84,30 @@ export const productsById = trycatch(async (req, res) => {
 //CREATE NEW PRODUCT
 
 export const addNewProduct = trycatch(async (req, res) => {
-  const productDetails = req.body;
+
+  console.log("req.body:", req.body);
+  console.log("req.file:", req.file);
+
+  if (!req.file) {
+    throw CustomErrorhandler("Image upload failed");
+  }
+
+  const productDetails = {
+    ...req.body,
+    image: req.file.path, // or req.file.secure_url if available
+  };
+
   const product = await getproductsModel.create(productDetails);
+
   if (!product) {
     throw CustomErrorhandler("failed to add product");
   }
 
   return res
     .status(201)
-    .json({ status: "success", message: "product create successfully" });
+    .json({ status: "success", message: "product created successfully" });
 });
+
 
 //UPDATE PRODUCT
 
@@ -114,7 +128,7 @@ export const updateProduct = trycatch(async (req, res) => {
     .status(500)
     .json({ status: "fail", message: "failed to update the products" });
 });
-
+ 
 //DELETE PRODUCT
 
 export const deleteproduct = trycatch(async (req, res) => {
@@ -128,7 +142,7 @@ export const deleteproduct = trycatch(async (req, res) => {
 export const Gettotalorders = trycatch(async (req, res) => {
   console.log(req.url);
 
-  const Totalorders = await orderModel.find();
+  const Totalorders = await orderModel.find().sort({createdAt:-1})
   console.log(Totalorders);
 
   return res

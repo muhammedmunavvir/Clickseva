@@ -10,9 +10,9 @@ import { trycatch } from "../utilities/AsycErrorHandling.js";
 
 //ADD TO CART
 export const addproduct = trycatch(async (req, res) => {
-
  
-  const userId = req.userId; 
+  const userId = req.user.id; 
+ 
   const productId = req.params.id; 
   const cart =  await addtocartservice(userId, productId);
 
@@ -27,7 +27,7 @@ export const addproduct = trycatch(async (req, res) => {
 
 export const viewcart = trycatch(async (req, res) => {
  
-  const userId = req.userId;
+  const userId = req.user.id;
 
   const { message, data } = await viewcartservices(userId);
 
@@ -38,7 +38,7 @@ export const viewcart = trycatch(async (req, res) => {
 export const removefromCart = trycatch(async (req, res) => {
   const productid = req.params.id;
 
-  const userId = req.userId;
+  const userId = req.user.id;
 
   const cart = removeCartService(userId, productid);
 
@@ -52,7 +52,7 @@ export const removefromCart = trycatch(async (req, res) => {
 
 export const updatecart = trycatch(async (req, res) => {
   const { action } = req.body;
-  const userId = req.userId;
+  const userId = req.user.id;
 
   const { id } = req.params;
 
@@ -61,3 +61,4 @@ export const updatecart = trycatch(async (req, res) => {
     .status(200)
     .json({ status: "success", message: "Cart updated successfully" });
 });
+  

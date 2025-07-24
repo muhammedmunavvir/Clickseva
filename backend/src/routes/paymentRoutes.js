@@ -2,13 +2,12 @@ import express from "express";
 import { payment,orderdetailcontroller, verifypayment,    } from "../controller/payment.js"
 
 
-import { jwtverificattion } from "../middlewares/auth-middleware.js";
 
 const router = express.Router();
 
-router.post("/payment", jwtverificattion, payment);
-router.get(  "/orderdeatils/:id", jwtverificattion,orderdetailcontroller);
-router.post("/verify-payment",jwtverificattion,verifypayment)
+router.post("/payment", payment);
+router.get(  "/orderdeatils/:id",orderdetailcontroller);
+router.post("/verify-payment",verifypayment)
 
 
   //orderdetailcontroller

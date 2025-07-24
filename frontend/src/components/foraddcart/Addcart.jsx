@@ -4,7 +4,7 @@ import axios from "axios";
 export const carthandle = async (product) => {
   const productId = product._id;
   console.log(productId);
-  const user = localStorage.getItem("userId");
+  const user = localStorage.getItem("userid");
 
   if (user) {
     try {

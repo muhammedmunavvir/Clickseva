@@ -2,138 +2,167 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 export const Addnewproduct = () => {
-  const [product, setproduct] = useState({
-    // id: "",
+  const [product, setProduct] = useState({
     heading: "",
     discription: "",
-    url: "",
     catogory: "",
     price: "",
     rating: "",
-    qty:1
+    qty: 1,
   });
+
+  const [image, setImage] = useState(null);
+  const navigate = useNavigate();
 
   const inputHandle = (e) => {
     const { name, value } = e.target;
-    setproduct((prevproduct) => ({ ...prevproduct, [name]: value }));
+    setProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-  const navigate = useNavigate();
-  const handlesubmit = async (e) => {
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:8080/admin/newProduct`, product);
-      toast.success("product add succseesfully!");
+      const formData = new FormData();
+      Object.entries(product).forEach(([key, value]) =>
+        formData.append(key, value)
+      );
+      formData.append("image", image);
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      await axios.post(`http://localhost:8080/admin/newProduct`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Product added successfully!");
       navigate("/admin/allproducts");
-    } catch {
-      console.log("Error");
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Something went wrong!");
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">
-        Add products
-      </h2>
-      <form className="space-y-4" onSubmit={handlesubmit}>
-        {/* <div>
-          <label className="block text-gray-700 font-medium">Product ID</label>
-          <input
-            onChange={inputHandle}
-            type="number"
-            placeholder="product ID"
-            value={product.id}
-            name="id"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div> */}
+    <div className="max-w-3xl mx-auto mt-10 p-8 bg-white shadow-2xl rounded-2xl border border-gray-200">
+      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
+        🛍️ Add New Product
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Heading */}
         <div>
-          <label className="block text-gray-700 font-medium">
-            Item Heading
+          <label className="block text-lg font-medium text-gray-700">
+            Heading
           </label>
           <input
-            onChange={inputHandle}
             type="text"
-            placeholder="Item Heading"
-            value={product.heading}
             name="heading"
+            value={product.heading}
+            onChange={inputHandle}
+            placeholder="Enter product title"
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
           />
         </div>
 
+        {/* Description */}
         <div>
-          <label className="block text-gray-700 font-medium">Description</label>
+          <label className="block text-lg font-medium text-gray-700">
+            Description
+          </label>
           <textarea
-            onChange={inputHandle}
-            placeholder="Item Description"
-            value={product.discription}
             name="discription"
+            value={product.discription}
+            onChange={inputHandle}
+            placeholder="Short description"
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm resize-none h-24 focus:ring focus:ring-blue-200 outline-none"
           />
         </div>
 
+        {/* Image Upload */}
         <div>
-          <label className="block text-gray-700 font-medium">Image URL</label>
-          <input
-            onChange={inputHandle}
-            type="text"
-            placeholder="Image URL"
-            value={product.url}
-            name="url"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+          <label className="block text-lg font-medium text-gray-700">
+            Upload Image
+          </label>
+          <div className="mt-2 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+            <input
+              type="file"
+              onChange={handleImageChange}
+              accept="image/*"
+              required
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
+            />
+          </div>
         </div>
 
+        {/* Category */}
         <div>
-          <label className="block text-gray-700 font-medium">Category</label>
+          <label className="block text-lg font-medium text-gray-700">
+            Category
+          </label>
           <input
-            onChange={inputHandle}
             type="text"
-            placeholder="Category"
-            value={product.catogory}
             name="catogory"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 font-medium">Price</label>
-          <input
+            value={product.catogory}
             onChange={inputHandle}
-            type="number"
-            placeholder="Price"
-            value={product.price}
-            name="price"
+            placeholder="e.g. Electronics"
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
           />
         </div>
 
-        <div>
-          <label className="block text-gray-700 font-medium">Rating</label>
-          <input
-            onChange={inputHandle}
-            type="number"
-            placeholder="Rating (1-5)"
-            value={product.rating}
-            name="rating"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+        {/* Price */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-lg font-medium text-gray-700">
+              Price ₹
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={product.price}
+              onChange={inputHandle}
+              placeholder="e.g. 999"
+              required
+              className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
+            />
+          </div>
+
+          {/* Rating */}
+          <div>
+            <label className="block text-lg font-medium text-gray-700">
+              Rating ⭐
+            </label>
+            <input
+              type="number"
+              name="rating"
+              value={product.rating}
+              onChange={inputHandle}
+              min="1"
+              max="5"
+              placeholder="1-5"
+              required
+              className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
+            />
+          </div>
         </div>
 
-        <div className="flex justify-end mt-6">
+        {/* Submit Button */}
+        <div className="text-right">
           <button
             type="submit"
-            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:bg-blue-700 transition duration-200"
+            className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold shadow-md hover:bg-green-700 transition duration-200"
           >
-            Save
+            ➕ Add Product
           </button>
         </div>
       </form>

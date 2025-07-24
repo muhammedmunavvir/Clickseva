@@ -39,15 +39,18 @@ const generateOrderPDF = async (orderId, orderData) => {
     y += 10;
 
     // Order Info
+    const createdDate = new Date(orderData.createdAt);
+    const day = createdDate.getDate().toString().padStart(2, "0");
+    const month = createdDate.toLocaleString("default", { month: "long" }); // "July"
+    const year = createdDate.getFullYear();
+    const formattedDate = `${day}-${month.toLowerCase()}-${year}`;
+
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
     pdf.text(`Order ID: ${orderData.orderId || orderData._id}`, margin, y);
-    pdf.text(
-      `Date: ${new Date(orderData.createdAt).toLocaleDateString()}`,
-      pdfWidth - margin,
-      y,
-      { align: "right" }
-    );
+    pdf.text(`Date: ${formattedDate}`, pdfWidth - margin, y, {
+      align: "right",
+    });
     y += 8;
 
     // Divider
@@ -189,28 +192,27 @@ const generateOrderPDF = async (orderId, orderData) => {
     // Total Amount Box
     const totalAmount = parseFloat(orderData.totalAmount || 0);
 
-// Add background box
-pdf.setFillColor(245, 245, 245);
-const boxHeight = 14;
-const boxWidth = pdfWidth - margin * 2;
-pdf.rect(margin, y, boxWidth, boxHeight, "F");
+    // Add background box
+    pdf.setFillColor(245, 245, 245);
+    const boxHeight = 14;
+    const boxWidth = pdfWidth - margin * 2;
+    pdf.rect(margin, y, boxWidth, boxHeight, "F");
 
-// Correctly render Rupee symbol using Unicode
-pdf.setFont("helvetica", "bold");
-pdf.setFontSize(12);
-pdf.setTextColor(30, 30, 30);
+    // Correctly render Rupee symbol using Unicode
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.setTextColor(30, 30, 30);
 
-// Use Unicode ₹ and add spacing
-// const rupeeSymbol = '\u20B9'; // Unicode for ₹
+    // Use Unicode ₹ and add spacing
+    // const rupeeSymbol = '\u20B9'; // Unicode for ₹
 
-pdf.text(
-  `Total Amount: ${totalAmount.toLocaleString("en-IN")}`,
-  margin + 5,
-  y + 9
-);
+    pdf.text(
+      `Total Amount: ${totalAmount.toLocaleString("en-IN")}`,
+      margin + 5,
+      y + 9
+    );
 
-y += boxHeight + 5;
-
+    y += boxHeight + 5;
 
     // Footer
     pdf.setFontSize(8);
@@ -303,6 +305,30 @@ export const Orders = () => {
     }
   };
 
+  const statusColors = {
+    Packing: "bg-yellow-300 hover:bg-yellow-400 text-yellow-900",
+    Shipped: "bg-blue-300 hover:bg-blue-400 text-blue-900",
+    "Out for Delivery": "bg-orange-300 hover:bg-orange-400 text-orange-900",
+    Completed: "bg-green-300 hover:bg-green-400 text-green-900",
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      const res = await axios.patch(
+        `${API_BASE_URL}/admin/update-order-status/${orderId}`,
+        { status }
+      );
+      console.log("Status updated:", res.data);
+
+      // Optional: Refresh orders after update
+      setOrders((prevOrders) =>
+        prevOrders.map((o) => (o._id === orderId ? { ...o, status } : o))
+      );
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
@@ -357,10 +383,36 @@ export const Orders = () => {
                       Order #{order.orderId || order._id}
                       <StatusBadge status={order.status} />
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(order.createdAt).toLocaleString()}
-                    </p>
+                    {new Date(order.createdAt)
+                      .toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })
+                      .replace(/\s/g, "-")}
                   </div>
+
+                  {order.status !== "Cancelled" && (
+                    <div>
+                      {[
+                        "Packing",
+                        "Shipped",
+                        "Out for Delivery",
+                        "Completed",
+                      ].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => updateOrderStatus(order._id, s)}
+                          className={`text-xs px-2 py-1 rounded mr-1 transition font-medium ${
+                            statusColors[s] ||
+                            "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="flex gap-2">
                     <button

@@ -4,7 +4,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 export const Adminhome = () => {
   const nav = useNavigate();
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem("userrole");
   useEffect(() => {
     if (role !== "admin") {
       nav("/");

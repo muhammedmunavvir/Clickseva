@@ -1,38 +1,35 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-export const Editing = () => {
-  const navigate=useNavigate()
-  const { pID } = useParams();
 
+export const Editing = () => {
+  const navigate = useNavigate();
+  const { pID } = useParams();
 
   const [form, myform] = useState({
     heading: "",
-    Description: "",
+    description: "",
     url: "",
-    category: "",
+    catogory: "",
     price: "",
     rating: "",
   });
 
-  //fetch specific product
+  const productfetch = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/products/${pID}`);
+      myform(res.data.data);
+      console.log(res.data.data)
+    } catch (error) {
+      console.log("Error fetching product:", error);
+    }
+  };
 
-  // const productfetch = async () => {
-  //   try {
-  //     const res = await axios.get(`http://localhost:5000/products/${pID}`);
-  //     myform(res.data);
-  //   } catch {
-  //     console.log("Error");
-  //   }
-  // };
+  useEffect(() => {
+    productfetch();
+  }, []);
 
-  // useEffect(() => {
-  //   productfetch();
-  // }, []);
-
-  //it for handle the input
   const inputHandle = (e) => {
     const { name, value } = e.target;
     myform((prev) => ({ ...prev, [name]: value }));
@@ -40,19 +37,15 @@ export const Editing = () => {
 
   const submitHandle = async (e) => {
     e.preventDefault();
-
     try {
-     
-      const res = await axios.patch(
+      await axios.patch(
         `http://localhost:8080/admin/updateProduct/${pID}`,
         form
       );
-      navigate("/admin/dashboard")
-      toast.success("product updated");
-  
-      // productfetch(); // it for fetching again for update in desplay
-    } catch(error) {
-      console.log("Error while editing product",error);
+      toast.success("Product updated");
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.log("Error while editing product", error);
     }
   };
 
@@ -82,8 +75,8 @@ export const Editing = () => {
           <textarea
             onChange={inputHandle}
             placeholder="Item Description"
-            value={form.discription}
-            name="Description"
+            value={form.description}
+            name="description"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
@@ -108,8 +101,8 @@ export const Editing = () => {
             onChange={inputHandle}
             type="text"
             placeholder="Category"
-            value={form.category}
-            name="category"
+            value={form.catogory}
+            name="catogory"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />

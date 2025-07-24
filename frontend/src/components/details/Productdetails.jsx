@@ -23,7 +23,7 @@ const Productdetails = () => {
 
   const tocart = async (product) => {
     const userLoggedIn =
-      localStorage.getItem("userId") && localStorage.getItem("username");
+      localStorage.getItem("userid") && localStorage.getItem("userrole");
     if (userLoggedIn) {
    
       await carthandle(product); 
