@@ -11,9 +11,11 @@ export const Addnewproduct = () => {
     price: "",
     rating: "",
     qty: 1,
+    measurement: "",
   });
 
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const inputHandle = (e) => {
@@ -27,15 +29,13 @@ export const Addnewproduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const formData = new FormData();
       Object.entries(product).forEach(([key, value]) =>
         formData.append(key, value)
       );
       formData.append("image", image);
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
 
       await axios.post(`http://localhost:8080/admin/newProduct`, formData, {
         headers: {
@@ -49,6 +49,7 @@ export const Addnewproduct = () => {
       console.error("Upload error:", err);
       toast.error("Something went wrong!");
     }
+    setLoading(false);
   };
 
   return (
@@ -56,6 +57,7 @@ export const Addnewproduct = () => {
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
         🛍️ Add New Product
       </h1>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Heading */}
         <div>
@@ -109,18 +111,24 @@ export const Addnewproduct = () => {
           <label className="block text-lg font-medium text-gray-700">
             Category
           </label>
-          <input
-            type="text"
+          <select
             name="catogory"
             value={product.catogory}
             onChange={inputHandle}
-            placeholder="e.g. Electronics"
             required
             className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
-          />
+          >
+            <option value="" disabled>
+              -- Select Category --
+            </option>
+            <option value="electronics">Electronics</option>
+            <option value="grocery">Grocery</option>
+            <option value="books">Books</option>
+            <option value="garments">Garments</option>
+          </select>
         </div>
 
-        {/* Price */}
+        {/* Price & Rating */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-lg font-medium text-gray-700">
@@ -136,8 +144,6 @@ export const Addnewproduct = () => {
               className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
             />
           </div>
-
-          {/* Rating */}
           <div>
             <label className="block text-lg font-medium text-gray-700">
               Rating ⭐
@@ -154,15 +160,41 @@ export const Addnewproduct = () => {
               className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
             />
           </div>
+          <div>
+            <label className="block text-lg font-medium text-gray-700">
+              Measurement
+            </label>
+            <input
+              type="text"
+              name="measurement"
+              value={product.measurement}
+              onChange={inputHandle}
+              placeholder="e.g. 500ml, 1kg"
+              required
+              className="w-full mt-2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 outline-none"
+            />
+          </div>
         </div>
 
         {/* Submit Button */}
         <div className="text-right">
           <button
             type="submit"
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold shadow-md hover:bg-green-700 transition duration-200"
+            disabled={loading}
+            className={`px-6 py-3 rounded-lg font-bold shadow-md transition duration-200 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
           >
-            ➕ Add Product
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Adding...
+              </span>
+            ) : (
+              "➕ Add Product"
+            )}
           </button>
         </div>
       </form>

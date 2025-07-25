@@ -85,17 +85,21 @@ export const productsById = trycatch(async (req, res) => {
 
 export const addNewProduct = trycatch(async (req, res) => {
 
-  console.log("req.body:", req.body);
-  console.log("req.file:", req.file);
 
   if (!req.file) {
     throw CustomErrorhandler("Image upload failed");
   }
 
   const productDetails = {
-    ...req.body,
-    image: req.file.path, // or req.file.secure_url if available
-  };
+      heading: req.body.heading,
+      discription: req.body.discription,
+      catogory: req.body.catogory,
+      price: Number(req.body.price),
+      rating: Number(req.body.rating) || 0,
+      qty: Number(req.body.qty) || 0,
+      url: req.file.path,   // Cloudinary URL
+      measurement:req.body.measurement
+    };
 
   const product = await getproductsModel.create(productDetails);
 

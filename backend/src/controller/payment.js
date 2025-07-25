@@ -41,7 +41,7 @@ export const payment = trycatch(async (req, res) => {
     (sum, item) => sum + item.price * item.qty,
     0
   );
-  console.log(totalAmount, "totalma");
+  
 
   // Create Razorpay order
   const options = {
@@ -162,7 +162,7 @@ const sendOrderConfirmationEmail = async (toEmail, orderDetails) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log("Email sent to:", toEmail);
+    // console.log("Email sent to:", toEmail);
   } catch (error) {
     console.error("Failed to send email:", error);
   }
@@ -193,7 +193,7 @@ Total: ₹${orderDetails.totalAmount}`;
       to: toNumber,
     });
 
-    console.log("✅ SMS sent:", message.sid);
+    // console.log("✅ SMS sent:", message.sid);
   } catch (error) {
     console.error("❌ Failed to send SMS:", error);
   }

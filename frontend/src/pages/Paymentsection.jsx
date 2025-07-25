@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const PaymentSection = () => {
+  const currentuseremail = localStorage.getItem("email");
+  console.log(currentuseremail);
   const [details, setDetails] = useState({
     address: "",
     housename: "",
@@ -14,7 +16,7 @@ const PaymentSection = () => {
     state: "",
     pincode: "",
     mobilenumber: "",
-    email: "",
+    email: currentuseremail,
     paymentmethod: "",
   });
 
@@ -233,16 +235,19 @@ const PaymentSection = () => {
             </div>
 
             <div>
-              <label className="block text-gray-600 mb-2">Email</label>
+              <label className="block text-gray-600 mb-2 ">Email</label>
               <input
                 name="email"
-                value={details.email}
-                onChange={handleChange}
+                value={currentuseremail}
                 type="email"
-                placeholder="Enter your Email"
-                className="w-full p-3 border border-gray-300 rounded-md"
-                required
+                className="w-full p-3 border border-gray-300 rounded-md cursor-not-allowed hover:bg-gray-200 transition"
+                readOnly
               />
+              <p className="text-sm text-blue-600 mt-1 ">
+                This email is used for sending order confirmations,
+                cancellations, and other order-related updates. It cannot be
+                edited.
+              </p>
             </div>
           </div>
 

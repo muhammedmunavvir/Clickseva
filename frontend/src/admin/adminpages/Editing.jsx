@@ -9,18 +9,19 @@ export const Editing = () => {
 
   const [form, myform] = useState({
     heading: "",
-    description: "",
+    discription: "",
     url: "",
     catogory: "",
     price: "",
     rating: "",
+    measurement: "",
   });
 
   const productfetch = async () => {
     try {
       const res = await axios.get(`http://localhost:8080/products/${pID}`);
       myform(res.data.data);
-      console.log(res.data.data)
+      console.log(res.data.data);
     } catch (error) {
       console.log("Error fetching product:", error);
     }
@@ -49,6 +50,36 @@ export const Editing = () => {
     }
   };
 
+  const [selectedImage, setSelectedImage] = useState(null);
+const [uploading, setUploading] = useState(false);
+
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    setUploading(true);
+    const res = await axios.post("http://localhost:8080/admin/newProduct", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const imageUrl = res.data.url;
+    myform((prev) => ({ ...prev, url: imageUrl }));
+    toast.success("Image uploaded successfully!");
+  } catch (error) {
+    console.error("Image upload failed", error);
+    toast.error("Image upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
+
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-md">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">
@@ -75,7 +106,7 @@ export const Editing = () => {
           <textarea
             onChange={inputHandle}
             placeholder="Item Description"
-            value={form.description}
+            value={form.discription}
             name="description"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -83,16 +114,24 @@ export const Editing = () => {
         </div>
 
         <div>
-          <label className="block text-gray-700 font-medium">Image URL</label>
+          <label className="block text-gray-700 font-medium">
+            Change Image
+          </label>
           <input
-            onChange={inputHandle}
-            type="text"
-            placeholder="Image URL"
-            value={form.url}
-            name="url"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
           />
+          {uploading ? (
+            <p className="text-sm text-blue-500 mt-1">Uploading...</p>
+          ) : form.url ? (
+            <img
+              src={form.url}
+              alt="Uploaded"
+              className="mt-3 w-32 h-32 object-cover rounded-md border"
+            />
+          ) : null}
         </div>
 
         <div>
@@ -129,6 +168,18 @@ export const Editing = () => {
             placeholder="Rating (1-5)"
             value={form.rating}
             name="rating"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">measurement</label>
+          <input
+            onChange={inputHandle}
+            type="text"
+            placeholder=""
+            value={form.measurement}
+            name="measurement"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           />

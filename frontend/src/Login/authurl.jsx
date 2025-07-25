@@ -13,12 +13,12 @@ function getCookie(name) {
 export const AuthRedirect = () => {
   console.log("Document.cookie:", document.cookie);
 
-  console.log("hiiii");
+  
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = getCookie("token"); // read token from cookie
-    console.log(token, "heee");
+    
     if (token) {
       try {
         console.log("hoooi");
@@ -29,6 +29,7 @@ export const AuthRedirect = () => {
         localStorage.setItem("userid", decoded.id); // use `id` instead of `_doc._id`
         localStorage.setItem("userrole", decoded.role); // use `role` instead of `_doc.role`
         localStorage.setItem("userpicture", decoded.picture);
+        localStorage.setItem("email", decoded.email);
 
         if (decoded.role === "admin") {
           navigate("/admin");
